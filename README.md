@@ -1,6 +1,8 @@
 <div align="center">
-  <img src="docs/hero.webp" alt="Verity — Lossless Gemini Watermark Remover" width="880" />
+  <img src="docs/hero.webp" alt="Verity restoring a real Gemini-generated image — the corner watermark is gone" width="880" />
 </div>
+
+<p align="center"><sub>A real Gemini export (1376×768), restored in the browser. The ✦ in the bottom-right corner is gone — and nothing else moved.</sub></p>
 
 <h1 align="center">Verity</h1>
 <p align="center">
@@ -69,13 +71,25 @@ The 4× loupe is the engine's own before/after inspector. Turn it on with the
   <img src="docs/before-after.webp" alt="4x loupe showing the Gemini sparkle in Before and a clean corner in After" width="880" />
 </div>
 
-<p align="center"><sub>Left: the ✦ before restoration. Right: the same pixels after — no smear, no blur, no crop.</sub></p>
+<p align="center"><sub>A real Gemini poster export. Left: the ✦ sitting directly on top of the concrete grain and the type. Right: the same pixels after restoration — the texture is intact and <em>MORNING · 2026</em> is still perfectly legible. An inpainting model would have turned that whole corner into mush.</sub></p>
+
+### Bulk
+
+Drop in as many as you like. Verity auto-locks the stamp on each one, and
+exports the whole batch as a single ZIP of lossless PNGs.
+
+<div align="center">
+  <img src="docs/batch.webp" alt="Six Gemini images queued in the batch bar with a Download ZIP button" width="880" />
+</div>
+
+<p align="center"><sub>Six real Gemini exports in one queue — 1024², 2048², 896×1200, 768×1376 and 1376×768. Each one was calibrated independently.</sub></p>
 
 ## Features
 
 | Feature | What you get |
 |---|---|
 | **~99.9% untouched pixels** | Bit&#8209;for&#8209;bit identical outside the watermark |
+| **Verified on real exports** | Six genuine Gemini files — 1024², 2048², 896×1200, 768×1376, 1376×768, 1200×896 — all six restored clean |
 | **Zero line blur** | Detail behind the stamp stays sharp — no AI smudge |
 | **1K & 2K calibrated** | Native 48 px and 96 px stamps, all aspect ratios |
 | **Bulk processing** | Drag in dozens of images, get one ZIP |
@@ -92,7 +106,7 @@ The 4× loupe is the engine's own before/after inspector. Turn it on with the
   <img src="docs/mobile.webp" alt="Verity on a mobile phone" width="300" />
 </div>
 
-<p align="center"><sub>The dock and batch bar are content&#8209;sized and centred, so they hug their content and can never overflow the viewport.</sub></p>
+<p align="center"><sub>A 768×1376 Gemini export, restored on a phone. The dock and batch bar are content&#8209;sized and centred, so they hug their content and can never overflow the viewport.</sub></p>
 
 ## What it uses
 
