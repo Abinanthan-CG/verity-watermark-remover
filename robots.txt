@@ -6,4 +6,4 @@ User-agent: *
 Allow: /
 Disallow: /404.html
 
-Sitemap: https://username.github.io/verity-watermark-remover/sitemap.xml
+Sitemap: https://abinanthan-cg.github.io/verity-watermark-remover/sitemap.xml

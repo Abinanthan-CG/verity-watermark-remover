@@ -4,8 +4,9 @@ A single-file, 100% client-side web app that removes the **Google Gemini corner
 sparkle watermark** from 1K and 2K images *losslessly* — by exactly inverting the
 alpha blend instead of smearing it away with AI inpainting.
 
-**Live demo:** `https://username.github.io/verity-watermark-remover/`
-*(replace with your own URL — see [Before you deploy](#before-you-deploy))*
+**Live demo:** https://abinanthan-cg.github.io/verity-watermark-remover/
+
+**Source:** https://github.com/Abinanthan-CG/verity-watermark-remover
 
 ---
 
@@ -65,52 +66,55 @@ ink lines passing *behind* the star come back razor-crisp instead of blurred.
 
 ---
 
-## Before you deploy
+## Deployment
 
-The repo ships with the placeholder URL `username.github.io/verity-watermark-remover`.
-**Replace it** — otherwise canonical tags, Open Graph, the sitemap and the
-robots.txt all point at a URL that isn't yours (and won't match your live site).
+This repo is **live** at https://abinanthan-cg.github.io/verity-watermark-remover/
 
-### Option A — one find-and-replace (recommended)
+It deploys automatically from `main` via
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) — every push to
+`main` runs the *Deploy to GitHub Pages* workflow and republishes the repo
+root as static files (`.nojekyll` stops Jekyll from mangling anything).
 
-Search the repo for `username.github.io/verity-watermark-remover` and replace it
-with your real URL. It appears in:
+To re-publish by hand: **Actions → Deploy to GitHub Pages → Run workflow**.
 
-| File                   | What it's for                                  |
-| ---------------------- | ---------------------------------------------- |
-| `index.html`           | `<link rel="canonical">`, `og:url`, `og:image`, JSON-LD `@id`s |
-| `sitemap.xml`          | The URL submitted to search engines             |
-| `robots.txt`           | `Sitemap:` directive                           |
-| `README.md`            | The demo link                                  |
+### If you fork this
 
-Also replace `github.com/username/verity-watermark-remover` in the
-`license` field of the JSON-LD in `index.html`.
+The canonical URL, Open Graph URL, sitemap and `robots.txt` all point at
+`abinanthan-cg.github.io/verity-watermark-remover`. If you fork, search the
+repo for `abinanthan-cg.github.io/verity-watermark-remover` and replace it
+with your own URL — it appears in:
 
-### Option B — custom domain
+| File          | What it's for                                            |
+| ------------- | -------------------------------------------------------- |
+| `index.html`  | `<link rel="canonical">`, `og:url`, `og:image`, JSON-LD `@id`s |
+| `sitemap.xml` | The URL submitted to search engines                       |
+| `robots.txt`  | `Sitemap:` directive                                     |
+| `README.md`   | The demo link                                            |
 
-If you're using a custom domain (e.g. `verity.example.com`):
+Also update the `license` field of the JSON-LD in `index.html`.
+
+### Custom domain
 
 1. Create a `CNAME` file in the repo root containing **only** your domain
    (no `https://`, no trailing slash).
 2. Add a `CNAME` DNS record for your host pointing to
-   `username.github.io`.
+   `abinanthan-cg.github.io`.
 3. Enable **Enforce HTTPS** in *Settings → Pages*.
 
 ---
 
 ## Deploy to GitHub Pages
 
-### Option 1 — GitHub Actions (recommended)
+### Option 1 — GitHub Actions (recommended, already wired up)
 
-1. Create a new repository named `verity-watermark-remover` and push this folder
-   to the `main` branch.
+1. Push to the `main` branch.
 2. Go to **Settings → Pages → Build and deployment → Source** and choose
    **GitHub Actions**.
 3. Push a commit (or run the *Deploy to GitHub Pages* workflow manually from
    the **Actions** tab).
 
-The included workflow (`.github/workflows/pages.yml`) publishes the repo root
-as-is, with `.nojekyll` preventing Jekyll from mangling anything.
+The included workflow publishes the repo root as-is, with `.nojekyll`
+preventing Jekyll from mangling anything.
 
 ### Option 2 — deploy from a branch
 
@@ -121,7 +125,7 @@ as-is, with `.nojekyll` preventing Jekyll from mangling anything.
 
 ### Option 3 — a custom domain
 
-Use the [custom domain steps](#option-b--custom-domain) above; the rest is
+Use the [custom domain steps](#custom-domain) above; the rest is
 identical.
 
 ---
