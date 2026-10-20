@@ -1,0 +1,31 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# Node / tooling
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+.cache/
+.vercel/
+.netlify/
+
+# Local scratch
+tmp/
+*.tmp
+*.bak
+*.orig

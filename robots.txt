@@ -1,0 +1,9 @@
+# Verity — Lossless Gemini Watermark Remover
+# Everything is allowed; the tool is a static page with no user accounts or
+# private routes. The 404 page is excluded so it is not indexed as content.
+
+User-agent: *
+Allow: /
+Disallow: /404.html
+
+Sitemap: https://username.github.io/verity-watermark-remover/sitemap.xml

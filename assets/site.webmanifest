@@ -1,0 +1,43 @@
+{
+  "name": "Verity — Lossless Gemini Watermark Remover",
+  "short_name": "Verity",
+  "description": "Lossless browser-based tool for removing the Google Gemini corner sparkle watermark from 1K and 2K images. Bulk import, ZIP export, 100% client-side.",
+  "id": "../",
+  "start_url": "../",
+  "scope": "../",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0A0A0B",
+  "theme_color": "#0A0A0B",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["graphics", "photo", "utilities", "productivity"],
+  "icons": [
+    {
+      "src": "favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "share_target": {
+    "action": "../",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
