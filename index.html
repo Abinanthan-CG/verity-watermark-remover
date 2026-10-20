@@ -751,6 +751,12 @@ body[data-view="loaded"] .dock {
 .dockbtn:active { transform: scale(0.96); }
 .dockbtn svg { width: 17px; height: 17px; flex: none; }
 
+/* Long/short label pair. The long form is the desktop wording; the short
+   form takes over on narrow screens, where the full labels push the dock
+   past the right edge of the viewport. */
+.dockbtn__t { white-space: nowrap; }
+.dockbtn__s { display: none; white-space: nowrap; }
+
 .dockbtn--primary {
   background: var(--accent);
   color: var(--ink);
@@ -1602,31 +1608,47 @@ body[data-view="loaded"] .batchbar {
   .seo-pills { margin-top: 16px; gap: 6px; }
   .seo-pill { font-size: 11px; padding: 4px 9px; }
 
+  /* ---- Batch bar: full-bleed row, filmstrip gets the leftover width ---- */
   .batchbar {
-    bottom: calc(74px + env(safe-area-inset-bottom));
+    left: 12px;
+    right: 12px;
+    bottom: calc(68px + env(safe-area-inset-bottom));
+    width: auto;
+    max-width: calc(100vw - 24px);
     padding: 5px 6px;
     gap: 5px;
-    max-width: calc(100vw - 16px);
     border-radius: 18px;
+    transform: translateX(0) translateY(12px);
   }
-  .batchstrip { max-width: 46vw; gap: 5px; }
+  body[data-view="loaded"] .batchbar { transform: translateX(0) translateY(0); }
+  .batchstrip { flex: 1 1 auto; min-width: 0; max-width: none; gap: 5px; }
   .batchitem { height: 36px; padding: 3px 7px 3px 4px; gap: 6px; }
   .batchitem__thumb { width: 26px; height: 26px; }
   .batchitem__info { max-width: 78px; }
   .batchitem__name { font-size: 11px; }
   .batchitem__meta { font-size: 9.5px; }
 
+  /* ---- Dock: full-bleed bar with short labels so nothing is clipped ---- */
   .dock {
-    bottom: calc(16px + env(safe-area-inset-bottom));
-    gap: 4px;
-    padding: 5px;
-    max-width: calc(100vw - 16px);
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    width: auto;
+    max-width: calc(100vw - 24px);
+    gap: 2px;
+    padding: 5px 6px;
+    justify-content: space-between;
+    transform: translateX(0) translateY(14px);
   }
-  .dockbtn { height: 40px; padding: 0 12px; font-size: 12.5px; gap: 6px; }
-  .dockbtn span { display: none; }
-  .dockbtn--primary span,
-  .dockbtn--zip span { display: inline !important; }
+  body[data-view="loaded"] .dock { transform: translateX(0) translateY(0); }
+  .dockbtn { height: 40px; padding: 0 12px; font-size: 12.5px; gap: 6px; min-width: 0; }
+  .dockbtn__t { display: none; }
+  .dockbtn__s { display: inline; }
+  .dock__sep { display: none; }
   .zoomtoggle { height: 40px; padding: 0 6px 0 10px; font-size: 12.5px; gap: 6px; }
+  .zoomtoggle__track { width: 34px; height: 20px; }
+  .zoomtoggle__knob { width: 14px; height: 14px; }
+  .zoomtoggle[aria-pressed="true"] .zoomtoggle__knob { transform: translateX(14px); }
   .loupe { top: 10px; right: 10px; padding: 7px; gap: 5px; border-radius: 14px; }
   .loupe__frame { width: 62px; height: 62px; border-radius: 8px; }
   .loupe__cap { font-size: 8px; }
@@ -1636,6 +1658,46 @@ body[data-view="loaded"] .batchbar {
     padding: 9px 14px;
     max-width: calc(100vw - 24px);
   }
+}
+
+/* ---- Very narrow phones: strip the filmstrip down to thumbnails so the
+        whole batch is visible at a glance instead of one item + scroll. ---- */
+@media (max-width: 620px) {
+  .batchactbtn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    justify-content: center;
+  }
+  .batchactbtn span { display: none; }
+
+  /* Pure thumbnail filmstrip. The remove badge only shows on the selected
+     item, so the strip stays compact and every thumbnail is reachable. */
+  .batchitem {
+    width: 32px;
+    height: 32px;
+    padding: 2px;
+    gap: 0;
+  }
+  .batchitem__info { display: none; }
+  .batchitem__thumb { width: 28px; height: 28px; border-radius: 7px; }
+  .batchstrip { gap: 3px; }
+  .batchitem__del {
+    display: none;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1;
+    background: rgba(12, 12, 14, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    color: var(--fg);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  }
+  .batchitem.is-selected .batchitem__del { display: grid; }
 }
 
 @media (max-width: 520px) {
@@ -1653,13 +1715,9 @@ body[data-view="loaded"] .batchbar {
   .seo-pill { font-size: 10.5px; padding: 3.5px 8px; }
 
   .batchbar__count { font-size: 10.5px; padding: 0 3px; }
-  .batchstrip { max-width: 42vw; }
-  .batchitem__info { max-width: 62px; }
-  .batchactbtn { height: 28px; padding: 0 8px; font-size: 11px; }
 
   .dockbtn--primary,
   .dockbtn--zip { padding: 0 11px; font-size: 12px; }
-  .dock__sep { margin: 0 1px; height: 18px; }
 
   .sheet {
     width: 100vw;
@@ -1677,6 +1735,30 @@ body[data-view="loaded"] .batchbar {
   .empty__mark svg { width: 22px; height: 22px; }
   .dropcard { margin-top: 12px; padding: 16px 14px; }
   .seo-pills { margin-top: 10px; }
+}
+
+/* ---- Smallest supported width: the load button drops its label so the
+        dock still fits on a 320px viewport. ---- */
+@media (max-width: 360px) {
+  .dockbtn--load .dockbtn__s { display: none; }
+  .dockbtn { padding: 0 10px; }
+}
+
+/* ---- Landscape phones: the empty state has to fit inside ~400px of
+        height, so everything optional is dropped. ---- */
+@media (max-height: 560px) and (orientation: landscape) {
+  .empty { padding: calc(var(--top-h) + 4px) var(--gutter) calc(20px + env(safe-area-inset-bottom)); }
+  .empty__mark { display: none; }
+  .empty__title { font-size: clamp(26px, 6vh, 34px); }
+  .empty__title-tag { margin-top: 6px; font-size: 9px; letter-spacing: 0.1em; }
+  .empty__sub { display: none; }
+  .dropcard { margin-top: 12px; padding: 14px 16px; }
+  .dropcard__icon { width: 34px; height: 34px; margin-bottom: 8px; }
+  .dropcard__icon svg { width: 17px; height: 17px; }
+  .dropcard__meta { display: none; }
+  .seo-pills { display: none; }
+  .stage { padding-bottom: calc(118px + env(safe-area-inset-bottom)); }
+  #displayCanvas { max-height: calc(100dvh - var(--top-h) - 142px - env(safe-area-inset-bottom)); }
 }
 
 /* --------------------------------------------------------------------------
@@ -1789,11 +1871,14 @@ body[data-view="loaded"] .batchbar {
   <div class="batchstrip" id="batchStrip" role="listbox" aria-label="Loaded images"></div>
 
   <div class="batchbar__actions">
-    <button id="addBatchBtn" class="batchactbtn" type="button" title="Add more images to batch">
+    <button id="addBatchBtn" class="batchactbtn" type="button" title="Add more images to batch" aria-label="Add more images to batch">
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
       <span>Add</span>
     </button>
-    <button id="clearBatchBtn" class="batchactbtn batchactbtn--subtle hidden" type="button" title="Clear batch and start over">Clear</button>
+    <button id="clearBatchBtn" class="batchactbtn batchactbtn--subtle hidden" type="button" title="Clear batch and start over" aria-label="Clear batch and start over">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      <span>Clear</span>
+    </button>
   </div>
 </div>
 
@@ -1801,12 +1886,13 @@ body[data-view="loaded"] .batchbar {
 <div class="dock" id="dock">
   <input id="fileInput" type="file" multiple accept="image/png,image/jpeg,image/webp" class="hidden" />
 
-  <label for="fileInput" class="dockbtn" role="button" tabindex="0" title="Load new image or batch">
+  <label for="fileInput" class="dockbtn dockbtn--load" role="button" tabindex="0" title="Load new image or batch" aria-label="Load new image or batch">
     <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
       <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/>
       <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>
     </svg>
-    <span>Replace</span>
+    <span class="dockbtn__t">Replace</span>
+    <span class="dockbtn__s" aria-hidden="true">Load</span>
   </label>
 
   <span class="dock__sep" aria-hidden="true"></span>
@@ -1818,21 +1904,23 @@ body[data-view="loaded"] .batchbar {
 
   <span class="dock__sep" aria-hidden="true"></span>
 
-  <button id="exportBtn" type="button" class="dockbtn dockbtn--primary" title="Download current restored image as lossless PNG">
+  <button id="exportBtn" type="button" class="dockbtn dockbtn--primary" title="Download current restored image as lossless PNG" aria-label="Download current restored image as lossless PNG">
     <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
       <path d="M12 4v12m0 0 4.5-4.5M12 16l-4.5-4.5"/>
       <path d="M4 18v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1"/>
     </svg>
-    <span>Download PNG</span>
+    <span class="dockbtn__t">Download PNG</span>
+    <span class="dockbtn__s" aria-hidden="true">PNG</span>
   </button>
 
-  <button id="exportZipBtn" type="button" class="dockbtn dockbtn--zip hidden" title="Download all restored images in batch as a single ZIP archive">
+  <button id="exportZipBtn" type="button" class="dockbtn dockbtn--zip hidden" title="Download all restored images in batch as a single ZIP archive" aria-label="Download all restored images in batch as a single ZIP archive">
     <svg fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
       <polyline points="7 10 12 15 17 10"/>
       <line x1="12" y1="15" x2="12" y2="3"/>
     </svg>
-    <span id="exportZipLabel">Download ZIP (2)</span>
+    <span id="exportZipLabel" class="dockbtn__t">Download ZIP (2)</span>
+    <span id="exportZipLabelShort" class="dockbtn__s" aria-hidden="true">ZIP</span>
   </button>
 </div>
 
@@ -3034,6 +3122,7 @@ body[data-view="loaded"] .batchbar {
       const clearBatchBtn = document.getElementById('clearBatchBtn');
       const exportZipBtn = document.getElementById('exportZipBtn');
       const exportZipLabel = document.getElementById('exportZipLabel');
+      const exportZipLabelShort = document.getElementById('exportZipLabelShort');
       const applyBatchSettingsBtn = document.getElementById('applyBatchSettingsBtn');
       const exportBatchPngsBtn = document.getElementById('exportBatchPngsBtn');
 
@@ -3183,6 +3272,7 @@ body[data-view="loaded"] .batchbar {
         if (total > 1) {
           exportZipBtn.classList.remove('hidden');
           exportZipLabel.textContent = `Download ZIP (${total})`;
+          exportZipLabelShort.textContent = `ZIP ${total}`;
           clearBatchBtn.classList.remove('hidden');
         } else {
           exportZipBtn.classList.add('hidden');
