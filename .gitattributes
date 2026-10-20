@@ -1,0 +1,9 @@
+# Normalise line endings so the HTML/CSS/JS and workflow YAML stay identical
+# across Windows and macOS/Linux contributors.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff binary
+*.woff2 binary
