@@ -1,193 +1,143 @@
-# Verity — Lossless Gemini Watermark Remover
+<div align="center">
+  <img src="docs/hero.webp" alt="Verity — Lossless Gemini Watermark Remover" width="880" />
+</div>
 
-A single-file, 100% client-side web app that removes the **Google Gemini corner
-sparkle watermark** from 1K and 2K images *losslessly* — by exactly inverting the
-alpha blend instead of smearing it away with AI inpainting.
+<h1 align="center">Verity</h1>
+<p align="center">
+  <strong>Lossless Gemini Watermark Remover</strong><br />
+  Removes the corner ✦ pixel&#8209;for&#8209;pixel — <em>not</em> by inpainting it away.
+</p>
 
-**Live demo:** https://abinanthan-cg.github.io/verity-watermark-remover/
+<p align="center">
+  <a href="https://abinanthan-cg.github.io/verity-watermark-remover/"><img alt="Live Demo" src="https://img.shields.io/badge/%F0%9F%9A%80_Live_Demo-abinanthan--cg.github.io-111111?style=for-the-badge&logo=github"></a>
+  <img alt="Zero dependencies" src="https://img.shields.io/badge/dependencies-0-111111?style=for-the-badge&logo=npm">
+  <img alt="No build step" src="https://img.shields.io/badge/build-none%20required-111111?style=for-the-badge">
+  <img alt="100% client-side" src="https://img.shields.io/badge/images_never_leave_your_device-111111?style=for-the-badge&logo=googlechrome">
+  <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-111111?style=for-the-badge">
+</p>
 
-**Source:** https://github.com/Abinanthan-CG/verity-watermark-remover
+<p align="center">
+  <a href="https://github.com/Abinanthan-CG/verity-watermark-remover/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/Abinanthan-CG/verity-watermark-remover?style=social"></a>
+  <a href="https://github.com/Abinanthan-CG/verity-watermark-remover/forks"><img alt="GitHub forks" src="https://img.shields.io/github/forks/Abinanthan-CG/verity-watermark-remover?style=social"></a>
+  <a href="https://github.com/Abinanthan-CG/verity-watermark-remover/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/Abinanthan-CG/verity-watermark-remover?style=social"></a>
+</p>
 
 ---
 
-## Why it's different
+## The problem
 
-Most "watermark removers" crop the corner, inpaint with a diffusion model, or
-clone-stamp over it. All three **destroy pixels**. Verity does the opposite: it
-solves for the original pixel values.
+Gemini stamps a ✦ sparkle in the corner of every image it generates. The
+obvious way to remove it is to crop the corner, run a diffusion model over it,
+or clone-stamp from nearby pixels. All three **destroy the image** — and
+diffusion models in particular smear the region into a blurry blob that gives
+the whole picture away.
 
-Gemini composites its watermark as a known alpha blend:
+## How it works
+
+The watermark isn't a texture pasted on top. It's a **known alpha blend**:
 
 ```
 I_wm = (1 − α) · I + α · 255
 ```
 
-where `α` is a fixed, calibrated alpha map baked into the app for both the
-**56×56 (48 px star, α_max = 0.306)** and **104×104 (96 px star, α_max = 0.502)**
-stamps. Verity inverts that equation exactly:
+where `α` is a fixed per-pixel alpha map. That equation is invertible, so
+Verity just solves it backwards:
 
 ```
 I = (I_wm − α · 255) / (1 − α)
 ```
 
-Because the blend is inverted algebraically rather than approximated, the
-result is **bit-for-bit identical** everywhere outside the watermark, and sharp
-ink lines passing *behind* the star come back razor-crisp instead of blurred.
+No model, no training, no guessing. Every pixel outside the stamp comes back
+**bit&#8209;for&#8209;bit identical**, and sharp detail passing *behind* the
+sparkle stays razor&#8209;crisp instead of dissolving.
 
-> Removes the **visible ✦ overlay only**. Invisible SynthID and C2PA metadata
-> are not modified.
+The two real Gemini stamps are baked into the app as ground&#8209;truth alpha
+maps — a **56×56** matrix (48 px star, `α_max = 0.306`) and a **104×104**
+matrix (96 px star, `α_max = 0.502`) — calibrated from lossless 1K and 2K
+exports across every aspect ratio.
+
+On top of the inversion sits a bilateral de&#8209;ringing pass that cleans up
+the compression ringing JPEG leaves around the stamp, without touching the
+lines underneath it.
+
+### Proof
+
+The 4× loupe is the engine's own before/after inspector. Turn it on with the
+`4×` toggle and look at the corner:
+
+<div align="center">
+  <img src="docs/before-after.webp" alt="4x loupe showing the Gemini sparkle in Before and a clean corner in After" width="880" />
+</div>
+
+<p align="center"><sub>Left: the ✦ before restoration. Right: the same pixels after — no smear, no blur, no crop.</sub></p>
 
 ## Features
 
-- **Exact reverse-alpha unblending** calibrated for 1K and 2K Gemini exports
-  across all aspect ratios (1:1, 16:9, 9:16, 3:4 and scaled variants)
-- **~99.9% of pixels untouched** — bit-for-bit identical outside the stamp
-- **Zero line blur** — no AI inpainting smudge, no clone-stamp artefacts
-- **Bulk processing** — drag in dozens of images, export one ZIP
-- **4× before/after loupe** — pixel-level proof in the corner of the stage
-- **Manual calibration** — corner, stamp size, offsets, opacity gain, de-ringing
-- **Lossless PNG export** at the original dimensions
-- **100% private** — images never leave the device; no server, no upload, no
-  telemetry
-- **Mobile-first layout** — the dock and batch bar are content-sized and
-  centred (`width: fit-content` + `margin: 0 auto`), so they hug their
-  content and can never overflow the viewport. Below 860px the dock drops
-  to icons plus short labels (`PNG`, `ZIP (5)`) and the batch bar compresses
-  into a scrolling filmstrip. Verified from 320px to 430px wide, plus
-  landscape phones.
+| Feature | What you get |
+|---|---|
+| **~99.9% untouched pixels** | Bit&#8209;for&#8209;bit identical outside the watermark |
+| **Zero line blur** | Detail behind the stamp stays sharp — no AI smudge |
+| **1K & 2K calibrated** | Native 48 px and 96 px stamps, all aspect ratios |
+| **Bulk processing** | Drag in dozens of images, get one ZIP |
+| **4× before/after loupe** | Verify the restoration at the pixel level |
+| **Manual calibration** | Corner, stamp size, offsets, opacity gain, de&#8209;ringing |
+| **Lossless PNG export** | Original dimensions preserved, never re&#8209;encoded |
+| **100% private** | Images never leave your device. No server, no upload, no telemetry |
+| **PWA installable** | Add it to your home screen, works offline |
+| **Mobile&#8209;first** | Content&#8209;sized UI that reflows down to 320px |
 
-## Supported formats
+### On your phone
 
-| Format | Notes                                    |
-| ------ | ---------------------------------------- |
-| PNG    | Native, preferred                        |
-| JPEG   | De-ringing filter reduces block artefacts |
-| WebP   | Supported                                |
+<div align="center">
+  <img src="docs/mobile.webp" alt="Verity on a mobile phone" width="300" />
+</div>
 
----
+<p align="center"><sub>The dock and batch bar are content&#8209;sized and centred, so they hug their content and can never overflow the viewport.</sub></p>
 
-## Deployment
+## What it uses
 
-This repo is **live** at https://abinanthan-cg.github.io/verity-watermark-remover/
+| Layer | Choice | Why |
+|---|---|---|
+| **UI** | Vanilla HTML + CSS | No framework, no build step, no runtime to download |
+| **Rendering** | Canvas 2D + `ImageData` | Direct per-pixel access — the whole method depends on it |
+| **Math** | Float32 alpha maps, precomputed gradients | `Float32Array` keeps the inversion accurate without rounding drift |
+| **Fonts** | Geist + Geist Mono | One variable sans, one mono, ~30 KB |
+| **Icons** | Inline SVG | No icon font, no sprite sheet, no extra request |
+| **Motion** | CSS transitions + `cubic-bezier` springs | GPU‑composited, respects `prefers-reduced-motion` |
+| **Material** | `backdrop-filter` glass | Frosted panels over drifting colour blooms |
+| **Storage** | **None** | No localStorage, no IndexedDB, no cookies, no analytics |
+| **Build** | **None** | One `index.html` — HTML, CSS and JS inline |
+| **Hosting** | GitHub Pages | Static files, HTTPS enforced, CDN&#8209;backed |
+| **PWA** | Web App Manifest | Installable, maskable icons, share target |
+| **SEO** | JSON‑LD `@graph`, OG, sitemap | `Organization` · `WebSite` · `WebPage` · `WebApplication` |
 
-It deploys automatically from `main` via
-[`.github/workflows/pages.yml`](.github/workflows/pages.yml) — every push to
-`main` runs the *Deploy to GitHub Pages* workflow and republishes the repo
-root as static files (`.nojekyll` stops Jekyll from mangling anything).
+> **Note** — Verity removes the *visible* ✦ overlay only. Invisible SynthID
+> and C2PA metadata are not touched.
 
-To re-publish by hand: **Actions → Deploy to GitHub Pages → Run workflow**.
+## Privacy
 
-### If you fork this
+There is no backend. The entire tool is the page you're reading: your image is
+decoded into a canvas, inverted in place, and handed back to you as a PNG.
+Nothing is uploaded, nothing is logged, there are no third&#8209;party requests
+except the Google Fonts stylesheet.
 
-The canonical URL, Open Graph URL, sitemap and `robots.txt` all point at
-`abinanthan-cg.github.io/verity-watermark-remover`. If you fork, search the
-repo for `abinanthan-cg.github.io/verity-watermark-remover` and replace it
-with your own URL — it appears in:
+## Try it
 
-| File          | What it's for                                            |
-| ------------- | -------------------------------------------------------- |
-| `index.html`  | `<link rel="canonical">`, `og:url`, `og:image`, JSON-LD `@id`s |
-| `sitemap.xml` | The URL submitted to search engines                       |
-| `robots.txt`  | `Sitemap:` directive                                     |
-| `README.md`   | The demo link                                            |
+Drop in a PNG, JPEG or WebP. If the corner looks wrong, the **Advanced
+calibration** panel lets you move the stamp, resize it, adjust the opacity
+gain and re-run the restoration until the corner is exactly right.
 
-Also update the `license` field of the JSON-LD in `index.html`.
+## Contributing
 
-### Custom domain
-
-1. Create a `CNAME` file in the repo root containing **only** your domain
-   (no `https://`, no trailing slash).
-2. Add a `CNAME` DNS record for your host pointing to
-   `abinanthan-cg.github.io`.
-3. Enable **Enforce HTTPS** in *Settings → Pages*.
-
----
-
-## Deploy to GitHub Pages
-
-### Option 1 — GitHub Actions (recommended, already wired up)
-
-1. Push to the `main` branch.
-2. Go to **Settings → Pages → Build and deployment → Source** and choose
-   **GitHub Actions**.
-3. Push a commit (or run the *Deploy to GitHub Pages* workflow manually from
-   the **Actions** tab).
-
-The included workflow publishes the repo root as-is, with `.nojekyll`
-preventing Jekyll from mangling anything.
-
-### Option 2 — deploy from a branch
-
-1. Push to `main`.
-2. **Settings → Pages → Source** → **Deploy from a branch** → `main` /
-   `/ (root)`.
-3. Save. GitHub serves the files as static content within ~1 minute.
-
-### Option 3 — a custom domain
-
-Use the [custom domain steps](#custom-domain) above; the rest is
-identical.
-
----
-
-## Repository layout
-
-```
-verity-watermark-remover/
-├── index.html              # the entire app — HTML + CSS + JS in one file
-├── 404.html                # styled not-found page (noindex)
-├── robots.txt              # crawl directives + sitemap pointer
-├── sitemap.xml             # for search engines
-├── CNAME                   # optional — only if you use a custom domain
-├── .nojekyll               # serve the repo as-is, no Jekyll processing
-├── LICENSE                 # MIT
-├── assets/
-│   ├── og-image.jpg        # 1200×630 social share card
-│   ├── favicon.svg         # vector mark
-│   ├── favicon-32.png      # raster favicon
-│   ├── favicon-mono.svg    # Safari pinned-tab icon
-│   ├── apple-touch-icon.png
-│   └── site.webmanifest    # PWA metadata
-└── .github/workflows/
-    └── pages.yml           # GitHub Pages deployment
-```
-
-## Local development
-
-It's a static page — any server works:
-
-```bash
-python -m http.server 8000
-# then open http://localhost:8000
-```
-
-Opening `index.html` directly with `file://` also works, but a server is
-required for the PWA manifest and some browsers' clipboard APIs.
-
----
-
-## SEO notes
-
-Everything technical is already in place:
-
-- `<link rel="canonical">`, `og:url`, `og:image` (+ `og:image:width/height/type/alt`)
-- `twitter:card = summary_large_image` with an absolute image URL
-- `robots` / `googlebot` directives with `max-image-preview:large`
-- **JSON-LD `@graph`** with `Organization`, `WebSite`, `WebPage` and
-  `WebApplication` (`applicationCategory`, `offers`, `featureList`,
-  `softwareVersion`, `isAccessibleForFree`, `screenshot`)
-- `robots.txt` + `sitemap.xml` wired together
-- `site.webmanifest` with maskable icons for PWA installability
-- A `404.html` that is `noindex` so it never competes with the main page
-
-**One thing to add once the site is live:** verify ownership in Google Search
-Console and Bing Webmaster Tools, then submit `sitemap.xml`. If you want a
-search snippet preview, paste the verification token into a `<meta
-name="google-site-verification" content="...">` tag in `index.html`.
+Issues and pull requests are welcome — especially **calibration data for Gemini
+stamps we haven't seen yet** (different regions, new models, unusual
+resolutions). Open an issue with the image and the parameters the tool
+reported.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT © [Abinanthan-CG](https://github.com/Abinanthan-CG)
 
-Verity is an independent project and is not affiliated with, endorsed by, or
-supported by Google.
+<p align="center">
+  <sub>Verity is an independent project and is not affiliated with, endorsed by, or supported by Google.</sub>
+</p>
