@@ -48,6 +48,10 @@ ink lines passing *behind* the star come back razor-crisp instead of blurred.
 - **Lossless PNG export** at the original dimensions
 - **100% private** — images never leave the device; no server, no upload, no
   telemetry
+- **Mobile-first layout** — below 860px the dock and batch bar reflow into
+  full-bleed bars with short labels (`Load · 4× · PNG · ZIP 5`), and the
+  filmstrip collapses to a thumbnail rail so the whole batch is visible
+  without scrolling. Verified down to a 320px viewport.
 
 ## Supported formats
 
