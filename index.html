@@ -4268,8 +4268,15 @@ body[data-view="loaded"] .batchbar {
     }));
   }
 
+  window.addEventListener('dragenter', (e) => {
+    // Chrome delivers the drop only when BOTH dragenter and dragover are
+    // canceled; dragover alone is not enough and the drop never fires.
+    e.preventDefault();
+  });
+
   window.addEventListener('dragover', (e) => {
     e.preventDefault();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
     if (viewport.contains(e.target)) return;
     forward('dragover', e);
   });
