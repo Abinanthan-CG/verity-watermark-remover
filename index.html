@@ -401,19 +401,30 @@ button { cursor: pointer; }
 .iconbtn svg { width: 17px; height: 17px; }
 .iconbtn[aria-expanded="true"] { color: var(--accent-hi); border-color: var(--accent-line); }
 
-.topbar__right { display: flex; align-items: center; gap: 10px; }
+.topbar__right { display: flex; align-items: center; }
 .ghbtn svg { fill: currentColor; stroke: none; }
 
-/* Nothing to calibrate until an image is loaded — keep the empty state pure. */
+/* Nothing to calibrate until an image is loaded — keep the empty state pure.
+   The toggle collapses to zero width so the GitHub icon sits flush at the edge,
+   then expands on load, sliding it smoothly to the left. */
 #advancedToggle {
+  margin-left: 10px;
+  padding: 0;
+  overflow: hidden;
   transition: color var(--fast) var(--ease), background var(--fast) var(--ease),
-              transform var(--fast) var(--spring), opacity var(--med) var(--ease);
+              transform var(--fast) var(--spring), opacity var(--med) var(--ease),
+              width var(--med) var(--ease), margin-left var(--med) var(--ease),
+              border-width var(--fast) var(--ease);
 }
 body[data-view="empty"] #advancedToggle,
 body[data-view="processing"] #advancedToggle {
   opacity: 0;
   pointer-events: none;
   transform: scale(0.85);
+  width: 0;
+  min-width: 0;
+  margin-left: 0;
+  border-width: 0;
 }
 
 /* --------------------------------------------------------------------------
